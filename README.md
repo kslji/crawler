@@ -37,7 +37,7 @@ You should have node install in your system .
     ```sh
         pm2 start web.url.fetcher.service.js --no-autorestart
         pm2 start crawler.scheduler.service.js --no-autorestart
-        pm2 consumer.file.scraper.js --no-autorestart
+        pm2 start consumer.file.scraper.js --no-autorestart
     ```
     
 ### OBJECTIVE 🔎
