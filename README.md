@@ -57,7 +57,7 @@ Stores each website and its respective categories.
 
 - Each website is handled by its own process to process categories efficiently and store the final product link list in the crawled-websites folder.
 
-##### Consumer File Scraper Service 🚂:
+##### Consumer File Scraper Service ( TEMPLATE FILE ) 🚂:
 
 - Serves as a template for scraping product links from category pages. 
 - Designed for horizontal scaling—multiple processes can run simultaneously to handle increased system load. The number of processes can be adjusted dynamically based on system requirements
