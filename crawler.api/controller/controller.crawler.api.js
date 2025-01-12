@@ -95,6 +95,8 @@ async function getWebUrls(req, res) {
                 status: "error",
             })
         }
+        weburl = weburl.split("https://")[1]
+
         const crawledDir = path.join(__dirname, `../../crawled.websites`)
 
         if (!await fileUtil.doesFileExistInFolder(crawledDir, weburl + ".json")) {
