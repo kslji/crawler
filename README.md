@@ -17,7 +17,29 @@ You should have node install in your system .
    npm i
    ```
    <br>
-
+3. Run api 
+   - Nodemon (will automatically restart the process api.)
+    ```sh
+      nodemon crawler.api.js
+    ```
+   - PM2 
+    ```sh
+      pm2 start crawler.api.js --no-autorestart
+    ```
+4. Run services
+ - Node
+    ```sh
+      node web.url.fetcher.service
+      node crawler.scheduler.service
+      node consumer.file.scraper.service
+    ```
+   - PM2 
+    ```sh
+        pm2 start web.url.fetcher.service.js --no-autorestart
+        pm2 start crawler.scheduler.service.js --no-autorestart
+        pm2 consumer.file.scraper.js --no-autorestart
+    ```
+    
 ### OBJECTIVE 🔎
 
 Design and implement a web crawler whose primary task is to discover and list all product URLs across multiple e-commerce websites. Add as many websites as much system will extract all product links from that website homepage urls.
