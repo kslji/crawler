@@ -1,3 +1,30 @@
+/**
+ * File Name: web.url.fetcher.service.js
+ * 
+ * Description:
+ * This service processes files in the "consumer" directory, where each file's name represents a website URL 
+ * (e.g., `addidas.com.json`). The service performs the following tasks:
+ * 1. Monitors the "consumer" directory for new files.
+ * 2. For each file:
+ *    - Extracts all category links from the website using Puppeteer.
+ *    - Filters the links to include only HTTPS URLs within the site's domain.
+ *    - If the file is empty, populates it with the filtered links.
+ *    - If the file already contains data, skips it.
+ * 3. Continuously loops to monitor for new files and updates.
+ * 
+ * Dependencies:
+ * - `fs`: File system module to read and write files.
+ * - `dirTree`: Utility to traverse directories.
+ * - `path`: Module to handle file paths.
+ * - `helperUtil`: Utility module for custom helper functions.
+ * - `puppeteerLib`: Puppeteer library for web scraping.
+ * - `globalConfig`: Configuration file for customizable settings.
+ * 
+ * Usage:
+ * Run this script as a standalone service to monitor the "consumer" directory 
+ * and process website category URLs into corresponding JSON files.
+ */
+
 const fs = require("fs")
 const dirTree = require("directory-tree")
 const path = require("path")
@@ -25,34 +52,34 @@ const globalConfig = require("../global.config.json");
                 lastConsumer = children[children.length - 1].name
             }
 
-            for (let grandchild of children) {
+            for (let website of children) {
                 const siteUrls = await puppeteerLib.extractLinks(
-                    `https://${grandchild.name.split(".json")[0]}`,
+                    `https://${website.name.split(".json")[0]}`,
                 )
                 const filteredLinks = helperUtil.listContainsHttpsLinks(
                     siteUrls,
-                    `https://${grandchild.name.split(".json")[0]}/`,
+                    `https://${website.name.split(".json")[0]}/`,
                 )
                 fs.readFile(
-                    path.join(__dirname, "../consumer", grandchild.name),
+                    path.join(__dirname, "../consumer", website.name),
                     "utf8",
                     (err, data) => {
                         if (err) {
                             console.error(
-                                `An error occurred while reading the file: ${grandchild.name}`,
+                                `An error occurred while reading the file: ${website.name}`,
                                 err,
                             )
                             return
                         }
                         if (data === "") {
-                            console.log(`Adding data in file ${grandchild.name} 💻 !!`)
+                            console.log(`Adding data in file ${website.name} 💻 !!`)
                             fs.appendFileSync(
-                                path.join(__dirname, "../consumer", grandchild.name),
+                                path.join(__dirname, "../consumer", website.name),
                                 JSON.stringify(filteredLinks, null, 2),
                             )
                         } else {
                             console.log(
-                                `File has already content in it ${grandchild.name} , ignoring 😮‍💨 !!`,
+                                `File has already content in it ${website.name} , ignoring 😮‍💨 !!`,
                             )
                         }
                     },
