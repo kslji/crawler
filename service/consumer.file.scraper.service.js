@@ -33,6 +33,7 @@ const pm2Lib = require("../lib/pm2.lib")
 
 const processName = process.env.name
 const CONSUMER_DIR = path.join(__dirname, "../consumer");
+const INDEX = 1;
 
 ; (async () => {
     try {
@@ -50,7 +51,7 @@ const CONSUMER_DIR = path.join(__dirname, "../consumer");
             const data = await fs.readFile(file.path, "utf8")
             const parseData = JSON.parse(data)
 
-            let iterUrls = 1
+            let iterUrls = INDEX
             if (
                 await fileUtil.doesFileExistInFolder(
                     path.join(__dirname, "../crawled.websites"),
@@ -67,7 +68,7 @@ const CONSUMER_DIR = path.join(__dirname, "../consumer");
                 iterUrls = parseWebsite.length
             }
 
-            for (; iterUrls < 3; iterUrls++) {
+            for (; iterUrls < parseData.length; iterUrls++) {
                 const fetchProductLinks = await pupeteerLib.productUrls(
                     parseData[iterUrls],
                 )
