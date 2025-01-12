@@ -55,36 +55,36 @@ Some additional features can be implemented for improved functionality. However,
 
 - Configuring Nginx would allow website requests to use different IPs, improving reliability and bypassing potential rate limits.
 
-## Working 📖
+## Working 📖 ✅
 
 ![Web Crawler](assets/workflow.png)
 
-### Crawler API Route - /add ✅:
+### Crawler API Route - /add :
 
 Used to add websites to the consumer folder. This is a good entry point for initializing the crawling process.
 
-### Consumer Folder ✅:
+### Consumer Folder :
 
 Acts as storage for the added websites and their category links. This modular design makes it easy to manage multiple websites.
 
-### Web URL Fetcher Service ✅:
+### Web URL Fetcher Service :
 
 Responsible for adding all category links from the consumer folder. This helps in organizing data before deeper crawling begins.
 
-### Consumer File Scraper Service ✅:
+### Consumer File Scraper Service :
 
 Consumes categories and produces product links.
 The "multi-file scheduler" ensures scalability, allowing parallel processing of files for efficiency.
 
-### Crawler Scheduler Service ✅:
+### Crawler Scheduler Service :
 
 Schedules consumer/website files for extracting product links. This service introduces automation, ensuring timely crawling.
 
-### Crawled Website Folder ✅:
+### Crawled Website Folder :
 
 Stores the extracted product links, maintaining separation of raw and processed data.
 
-### Crawler API Route - /fetch ✅:
+### Crawler API Route - /fetch :
 
 Provides a way to retrieve crawled data, making it accessible for downstream processes.
 
