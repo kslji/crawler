@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const crawlerRoutes = require("../crawler.api/routes/web.crawler.routes.crawler.api")
+const crawlerRoutes = require("../crawler.api/routes/routes.crawler.api")
 const PORT = 5001
 
     ; (async () => {
@@ -8,7 +8,7 @@ const PORT = 5001
             app.use(express.json())
             app.use(express.urlencoded({ extended: true }))
 
-            app.use("/crawl", crawlerRoutes)
+            app.use("/crawler", crawlerRoutes)
             app.get("/status", (req, res) => {
                 return res.json({
                     data: {

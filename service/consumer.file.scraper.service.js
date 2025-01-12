@@ -1,3 +1,26 @@
+/**
+ * This script monitors a directory (`consumer`) for JSON files named after a specific process.
+ * Once a matching file is detected, it reads the file, processes URLs listed within it, 
+ * and fetches product links using Puppeteer. The results are saved to a `crawled.websites` 
+ * directory. If the file has already been processed before, it continues from where it left off.
+ * 
+ * Key Features:
+ * - Watches the `consumer` folder for specific JSON files.
+ * - Uses Puppeteer to scrape product links from the URLs.
+ * - Ensures previously processed data is not lost and resumes processing.
+ * - Deletes the processed file and stops the associated process using PM2 once done.
+ * - Includes error handling to gracefully stop the PM2 process in case of failures.
+ * 
+ * Dependencies:
+ * - `path` for handling file paths.
+ * - `fs` (with promises) for file operations.
+ * - `directory-tree` to fetch folder structure.
+ * - Custom utilities (`helperUtil`, `fileUtil`, `pupeteerLib`, `pm2Lib`) for sleep, file existence checks, Puppeteer interactions, and PM2 operations.
+ * 
+ * Configuration:
+ * - `globalConfig` contains sleep durations for various steps to control the workflow.
+ * 
+ */
 const path = require("path")
 const fs = require("fs").promises
 const dirTree = require("directory-tree")
@@ -18,7 +41,6 @@ const CONSUMER_DIR = path.join(__dirname, "../consumer");
             const file = children.find(
                 (child) => child.name === processName + ".json",
             )
-            console.log(file)
             if (!file) {
                 console.log(`🔍 consumer folder is empty 🔍 !!`)
                 await helperUtil.sleep(globalConfig.setupCrawlersNoConsumerFoundSleep)

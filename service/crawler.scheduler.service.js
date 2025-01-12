@@ -1,3 +1,25 @@
+/**
+ * Directory Monitoring and Process Management Service
+ *
+ * This script continuously monitors a specified directory for JSON files.
+ * For each file found:
+ * - It reads the file's content.
+ * - Checks if a PM2 process corresponding to the file's base name is running.
+ * - Starts the process if it doesn't exist and the total PM2 process count is below a configured limit.
+ *
+ * Key Features:
+ * - Automates process management using PM2.
+ * - Supports dynamic monitoring and file-based process association.
+ * - Ensures resource limits are respected through configuration.
+ *
+ * Dependencies:
+ * - File System (fs) for reading files.
+ * - Directory Tree (directory-tree) for scanning the directory structure.
+ * - Path for handling file paths.
+ * - Custom utility libraries for PM2 management, file handling, and delays.
+ * - Global configuration for managing runtime settings.
+ */
+
 const fs = require("fs").promises
 const dirTree = require("directory-tree")
 const path = require("path")
@@ -26,7 +48,7 @@ async function processFile(file) {
             procesList.length < globalConfig.totalPm2Processes
         ) {
             await pm2Lib.pm2Start(
-                fileUtil.getAbsoluteFilePath(`/service/setup.crawlers.service.js`),
+                fileUtil.getAbsoluteFilePath(`/service/consumer.file.scraper.service.js`),
                 processName,
             )
             console.log(`✅ Started process for file: ${file.name}`)
