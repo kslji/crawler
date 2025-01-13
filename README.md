@@ -56,6 +56,7 @@ headsupfortails.com
 thehouseofrare.com
 ```
 
+
 ### APPROACH 💡
 The system is designed with APIs to add website URLs and retrieve product URLs. To ensure horizontal scalability, the architecture includes three core services:
 
