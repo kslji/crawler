@@ -19,11 +19,16 @@
 const globalConfig = require("../global.config.json")
 
 function listContainsHttpsLinks(list, domain) {
-    return list.filter(
-        (item) =>
+    return list.filter((item, index) => {
+        const nextItem = list[index + 1];
+        return (
+            nextItem &&
+            item.split("/").length === nextItem.split("/").length &&
             item.includes(domain) &&
-            globalConfig.wordsToIgnore.every((word) => !item.includes(word)),
-    )
+            item !== domain &&
+            globalConfig.wordsToIgnore.every((word) => !item.includes(word))
+        );
+    });
 }
 
 function filterUniqueLinks(productLinks, allLinks) {
