@@ -33,7 +33,7 @@ const pm2Lib = require("../lib/pm2.lib")
 
 const processName = process.env.name
 const CONSUMER_DIR = path.join(__dirname, "../consumer");
-const INDEX = 1;
+const INDEX = 0;
 
 ; (async () => {
     try {
@@ -70,7 +70,7 @@ const INDEX = 1;
 
             for (; iterUrls < parseData.length; iterUrls++) {
                 const fetchProductLinks = await pupeteerLib.productUrls(
-                    parseData[iterUrls],
+                    parseData[iterUrls], processName
                 )
                 uploadAllProductLinks = uploadAllProductLinks.concat(fetchProductLinks)
                 await fs.writeFile(
@@ -79,9 +79,10 @@ const INDEX = 1;
                     "utf8",
                 )
             }
-
+            // remove all processed files from consumer and cache.data directory
             await Promise.all([
                 fs.unlink(path.join(__dirname, `../consumer/${processName}.json`)),
+                fs.unlink(path.join(__dirname, `../cache.data/${processName}.json`)),
                 pm2Lib.pm2Delete(processName),
             ])
 

@@ -44,6 +44,18 @@ You should have node install in your system .
 
 Design and implement a web crawler whose primary task is to discover and list all product URLs across multiple e-commerce websites. Add as many websites as much system will extract all product links from that website homepage urls.
 
+##### TESTED WEBSITES 
+
+```
+https://baccabucci.com/
+www.adidas.co.in
+www.jackjones.in
+www.limeroad.com
+wildcraft.com
+headsupfortails.com
+thehouseofrare.com
+```
+
 ### APPROACH 💡
 The system is designed with APIs to add website URLs and retrieve product URLs. To ensure horizontal scalability, the architecture includes three core services:
 
@@ -63,6 +75,87 @@ Stores each website and its respective categories.
 - Designed for horizontal scaling—multiple processes can run simultaneously to handle increased system load. The number of processes can be adjusted dynamically based on system requirements
 
 ### EXTRA 🤯
+
+- Multiple websites have different pattern to fetch product urls therefore have made two different functions to extract product urls.
+- authorizeProductUrlFetcher function : Fetches and authorizes product URLs from a Puppeteer page. Saves extracted links to cache for future reference.
+
+```sh
+async function authorizeProductUrlFetcher(page, url, fileName) {
+    let productLinks = await extractPageProductLinksV1(page);
+
+    if (!await fileUtil.doesFileExistInFolder(
+        path.join(__dirname, "../cache.data"),
+        fileName + ".json",
+    )) {
+        if (productLinks.length === 0) {
+            fs.writeFileSync(path.join(__dirname, `../cache.data/${fileName}.json`), JSON.stringify({ value: false }), 'utf8');
+        } else {
+            fs.writeFileSync(path.join(__dirname, `../cache.data/${fileName}.json`), JSON.stringify({ value: true }), 'utf8');
+        }
+    }
+
+    if (!await fileUtil.getCachedData(fileName)) {
+        console.log("Fallback to extractPageProductLinksV1 as no links found.");
+        productLinks = await extractPageProductLinksV2(page, url);
+    }
+    return productLinks;
+    }
+```
+(Extracts product-specific links from a Puppeteer page instance.
+ Filters links containing specific keywords like "/products/", "/items/", or "/p/".)
+```sh
+async function extractPageProductLinksV1(page) {
+    const productLinks = await page.evaluate(() => {
+        const links = Array.from(document.querySelectorAll("a"))
+            .filter(
+                (anchor) =>
+                    anchor.href.includes("/products/") ||
+                    anchor.href.includes("/items/") ||
+                    anchor.href.includes("/p/"),
+            )
+            .map((anchor) => anchor.href)
+
+        return [...new Set(links)]
+    })
+    return productLinks
+}
+```
+
+( Extracts product-specific links from a Puppeteer page instance based on URL structure.
+  Avoids certain category and page links to refine the product URLs.)
+
+```sh
+async function extractPageProductLinksV2(page, url) {
+    const parts = url.split('/');
+    const categoryPart = parts[parts.length - 1];
+    const productLinks = await page.evaluate((categoryPart, parts) => {
+        const links = Array.from(document.querySelectorAll("a"))
+            .filter(
+                (anchor) =>
+                    anchor.href !== `https://${parts[2]}/${categoryPart}` &&
+                    anchor.href.split("/").length !== (url).split("/").length &&
+                    anchor.href.includes(categoryPart)
+            )
+            .map((anchor) => anchor.href)
+        return [...new Set(links)]
+    }, categoryPart, parts)
+    return productLinks
+}
+```
+
+- Created a cache.data directory to store cached file data, with files named according to the corresponding website name.
+
+```sh
+async function getCachedData(filename) {
+    try {
+        let data = await fs.readFile(path.join(__dirname, `../cache.data/${filename}.json`), "utf8");
+        data = JSON.parse(data);
+        return data["value"]
+    } catch (err) {
+        console.error('Error reading or parsing the file:', err);
+    }
+}
+```
 
 - Batch Processing: Product links are extracted in batches of 5 pages at a time (configurable). Utilizes Promise.all for multithreading, enhancing performance and efficiency.
 

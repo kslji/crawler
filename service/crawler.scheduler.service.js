@@ -60,7 +60,7 @@ async function processFile(file) {
             await helperUtil.sleep(globalConfig.scheduleCrawlerServiceSleep)
         }
     } catch (err) {
-        console.error(`❌ Error processing file: ${file.name}`, err)
+        console.error(`❌ some error occured , stabilizing .... : ${file.name}`)
     }
 }
 

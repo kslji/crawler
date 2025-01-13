@@ -22,7 +22,6 @@ function listContainsHttpsLinks(list, domain) {
     return list.filter(
         (item) =>
             item.includes(domain) &&
-            item !== domain &&
             globalConfig.wordsToIgnore.every((word) => !item.includes(word)),
     )
 }
