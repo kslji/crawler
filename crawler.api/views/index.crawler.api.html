@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Crawler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: #007BFF;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #007BFF;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin: 1rem 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        hr {
+            margin: 2rem 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        .fetched-data {
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+    <script>
+        // Function to handle URL submission (POST)
+        async function submitUrls() {
+            const urls = document.getElementById("urls").value.split("\n").map(url => url.trim());
+            const payload = { "urls": urls };
+
+            try {
+                const response = await fetch('/crawler/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert("URLs submitted successfully!");
+                } else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while submitting URLs.");
+            }
+        }
+
+        // Function to handle URL data fetch (GET)
+        async function fetchData() {
+            const webUrl = document.getElementById("webUrl").value.trim();
+            
+            try {
+                const response = await fetch(`/crawler/fetch?weburl=${encodeURIComponent(webUrl)}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById("fetchResult").textContent = JSON.stringify(result, null, 2);
+                } else {
+                    alert("Error: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while fetching the data.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Web Crawler Tool</h1>
+    </header>
+
+    <div class="container">
+        <h1>Submit Web URLs for Crawling</h1>
+        <textarea id="urls" rows="6" placeholder="Enter each URL on a new line..."></textarea>
+        <button onclick="submitUrls()">Submit URLs</button>
+
+        <hr>
+
+        <h1>Fetch Crawled Data</h1>
+        <input type="text" id="webUrl" placeholder="Enter URL to fetch data">
+        <button onclick="fetchData()">Fetch Data</button>
+
+        <h3>Fetched Data:</h3>
+        <pre id="fetchResult" class="fetched-data"></pre>
+    </div>
+</body>
+</html>

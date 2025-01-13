@@ -86,7 +86,7 @@ async function addWebUrls(req, res) {
 
 async function getWebUrls(req, res) {
     try {
-        let { weburl } = req.body
+        let { weburl } = req.query
 
         if (!weburl && weburl.length === 0) {
             return res.status(400).json({
@@ -95,7 +95,8 @@ async function getWebUrls(req, res) {
                 status: "error",
             })
         }
-        weburl = weburl.split("https://")[1]
+
+        weburl = weburl.split("/")[2]
 
         const crawledDir = path.join(__dirname, `../../crawled.websites`)
 
