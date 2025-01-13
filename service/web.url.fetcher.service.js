@@ -29,6 +29,7 @@ const fs = require("fs")
 const dirTree = require("directory-tree")
 const path = require("path")
 const helperUtil = require("../util/helper.util")
+const fileUtil = require("../util/file.util.js")
 const puppeteerLib = require("../lib/pupeteer.lib")
 const globalConfig = require("../global.config.json");
 
@@ -41,7 +42,7 @@ const globalConfig = require("../global.config.json");
 
             if (children.length <= 0) {
                 console.log("No New file arrived 🧐 !!")
-                await helperUtil.sleep(2000)
+                await helperUtil.sleep(globalConfig.sleep)
             }
 
             if (
@@ -56,14 +57,19 @@ const globalConfig = require("../global.config.json");
                 const siteUrls = await puppeteerLib.extractLinks(
                     `https://${website.name.split(".json")[0]}`,
                 )
-                const filteredLinks = helperUtil.listContainsHttpsLinks(
+                let filteredLinks = helperUtil.listContainsHttpsLinks(
                     siteUrls,
                     `https://${website.name.split(".json")[0]}/`,
                 )
+                filteredLinks = filteredLinks.filter(
+                    (item) =>
+                        item !== `https://${website.name.split(".json")[0]}/`
+                )
+
                 fs.readFile(
                     path.join(__dirname, "../consumer", website.name),
                     "utf8",
-                    (err, data) => {
+                    async (err, data) => {
                         if (err) {
                             console.error(
                                 `An error occurred while reading the file: ${website.name}`,
@@ -77,9 +83,10 @@ const globalConfig = require("../global.config.json");
                                 path.join(__dirname, "../consumer", website.name),
                                 JSON.stringify(filteredLinks, null, 2),
                             )
+                            await fileUtil.removeDuplicatesUrls(filteredLinks, website.name.split(".json")[0])
                         } else {
                             console.log(
-                                `File has already content in it ${website.name} , ignoring 😮‍💨 !!`,
+                                `${website.name} product link list already exist , ignoring 😮‍💨 !!`,
                             )
                         }
                     },
