@@ -222,12 +222,7 @@ Provides a way to retrieve crawled data, making it accessible for downstream pro
 - To get processed product URLs from a specific website, use the /fetch endpoint:
 #### Request:
 ```
-    GET http://localhost:5001/crawler/fetch
-    Content-Type: application/json
-
-    {
-        "weburl":"https://headsupfortails.com"
-    }
+    GET http://localhost:5001/crawler/fetch?weburl:"https://headsupfortails.com"
 ```
 
 ### Key Features ✨:
