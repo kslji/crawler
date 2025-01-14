@@ -76,6 +76,7 @@ Stores each website and its respective categories.
 - Designed for horizontal scaling—multiple processes can run simultaneously to handle increased system load. The number of processes can be adjusted dynamically based on system requirements
 
 ### EXTRA 🤯
+#####(NO DUPLICATION OF PRODUCT URLS)
 
 - Multiple websites have different pattern to fetch product urls therefore have made two different functions to extract product urls.
 - authorizeProductUrlFetcher function : Fetches and authorizes product URLs from a Puppeteer page. Saves extracted links to cache for future reference.
